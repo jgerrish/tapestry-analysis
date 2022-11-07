@@ -1,0 +1,18 @@
+[package]
+name = "tapestry-analysis"
+version = "0.1.0"
+edition = "2021"
+authors = ["Joshua Gerrish <jgerrish@gmail.com>"]
+description = "Collection of cryptanalysis tools for checksum and hash algorithms"
+keywords = ["checksum", "hash", "algorithm", "crypto", "cryptanalysis"]
+readme = "README.md"
+repository = "https://github.com/jgerrish/tapestry-analysis"
+homepage = "https://github.com/jgerrish/tapestry-analysis"
+license = "MIT"
+
+[features]
+external-rand = ["dep:rand"]
+
+[dependencies]
+checksum-tapestry = "0.4"
+rand = { version = "0.8", optional = true }
