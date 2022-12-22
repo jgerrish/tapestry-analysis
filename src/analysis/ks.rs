@@ -59,6 +59,32 @@ pub fn critical_value(cv: CriticalValue, n: u32) -> Option<f32> {
     }
 }
 
+/// Calculate the shifted expected uniform CDF distributions to
+/// compare to the observed distribution.
+/// This calculates "upper" and "lower" distributions.
+///
+/// # Examples
+///
+/// ```
+/// use tapestry_analysis::analysis::ks::shifted_uniform_cdf_distribution;
+///
+/// let n = 5;
+/// let (uniform_cdf_shifted_minus, uniform_cdf_shifted_plus) =
+///     shifted_uniform_cdf_distribution(n as u32);
+///
+/// assert_eq!(uniform_cdf_shifted_minus, [0.0, 0.2, 0.4, 0.6, 0.8]);
+/// assert_eq!(uniform_cdf_shifted_plus, [0.2, 0.4, 0.6, 0.8, 1.0]);
+/// ```
+pub fn shifted_uniform_cdf_distribution(n: u32) -> (Vec<f32>, Vec<f32>) {
+    let mut uniform_cdf_shifted_minus: Vec<f32> = Vec::new();
+    (0..n).for_each(|i| uniform_cdf_shifted_minus.push(i as f32 / n as f32));
+
+    let mut uniform_cdf_shifted_plus: Vec<f32> = Vec::new();
+    (1..=n).for_each(|i| uniform_cdf_shifted_plus.push(i as f32 / n as f32));
+
+    (uniform_cdf_shifted_minus, uniform_cdf_shifted_plus)
+}
+
 /// Calculate the Kolmogorov–Smirnov test statistic
 /// This finds the maximum absolute difference between a model or
 /// expected CDF and an empirical CDF
@@ -95,20 +121,9 @@ pub fn statistic(
     let sorted_data: Vec<f32> = samples.iter().map(|s| s.sample).collect();
 
     let n = sorted_data.len();
-    let mut cur = 0.0;
-    let step: f32 = 1.0 / sorted_data.len() as f32;
-    let mut uniform_cdf_minus: Vec<f32> = Vec::new();
-    for _i in 0..n {
-        uniform_cdf_minus.push(cur);
-        cur += step;
-    }
 
-    let mut uniform_cdf_plus: Vec<f32> = Vec::new();
-    let mut cur = step;
-    for _i in 0..n {
-        uniform_cdf_plus.push(cur);
-        cur += step;
-    }
+    let (uniform_cdf_shifted_minus, uniform_cdf_shifted_plus) =
+        shifted_uniform_cdf_distribution(n as u32);
 
     let mut interpolated_values: Vec<f32> = Vec::new();
 
@@ -120,14 +135,14 @@ pub fn statistic(
     let mut plus_max: f32 = 0.0;
 
     for i in 0..n {
-        let res = f32::abs(uniform_cdf_minus[i] - interpolated_values[i]);
+        let res = f32::abs(uniform_cdf_shifted_minus[i] - interpolated_values[i]);
         if res > minus_max {
             minus_max = res;
         }
     }
 
     for i in 0..n {
-        let res = f32::abs(uniform_cdf_plus[i] - interpolated_values[i]);
+        let res = f32::abs(uniform_cdf_shifted_plus[i] - interpolated_values[i]);
         if res > plus_max {
             plus_max = res;
         }
@@ -144,7 +159,7 @@ mod tests {
     use crate::analysis::{
         distribution::{CriticalValue, DiscreteUniformDistributionParameters},
         experiment::Experiment,
-        ks::{critical_value, statistic},
+        ks::{critical_value, shifted_uniform_cdf_distribution, statistic},
         sample::Sample,
     };
 
@@ -243,5 +258,56 @@ mod tests {
         } else {
             assert!(false);
         }
+    }
+
+    /// Test issues with error propagation.
+    /// There was a an issue with floating point calcluations in a previous version
+    /// when generating plus and minus shifted CDFs.
+    /// This tests for some of those errors.
+    #[test]
+    fn test_shifted_uniform_cdf_distribution_fp_expected_mean() {
+        // Use a larger sample size, the issue wasn't being exposed in the
+        // small n=8 test case
+        let n: usize = 100000;
+
+        let (uniform_cdf_minus, uniform_cdf_plus) = shifted_uniform_cdf_distribution(n as u32);
+
+        let mut total: f32 = 0.0;
+        for s in &uniform_cdf_minus {
+            total += *s as f32;
+        }
+        let ucm_mean: f32 = total / n as f32;
+
+        let mut total: f32 = 0.0;
+        for s in &uniform_cdf_plus {
+            total += *s as f32;
+        }
+        let ucp_mean: f32 = total / n as f32;
+
+        // Test for expected distribution behavior.
+        // The mean of the mean of uniform_cdf_minus and uniform_cdf_plus should
+        // be the mean of the expected distribution, (e.g. 0.5 for normalized uniform)
+        assert!(f32::abs(((ucm_mean + ucp_mean) / 2.0) - 0.5) < 0.000001);
+    }
+
+    /// Test issues with error propagation.
+    /// There was a an issue with floating point calcluations in a previous version
+    /// when generating plus and minus shifted CDFs.
+    /// This tests for some of those errors.
+    #[test]
+    fn test_shifted_uniform_cdf_distribution_fp_error_propagation() {
+        // Use a larger sample size, the issue wasn't being exposed in the
+        // small n=8 test case
+        let n: usize = 100000;
+
+        let (uniform_cdf_minus, uniform_cdf_plus) = shifted_uniform_cdf_distribution(n as u32);
+
+        // Test for error propagation, the last value should be exact
+        // with 100000 items.
+        let ucm_last = uniform_cdf_minus[n - 1];
+        let ucp_last = uniform_cdf_plus[n - 1];
+
+        assert_eq!(ucm_last, 0.99999);
+        assert_eq!(ucp_last, 1.0);
     }
 }
