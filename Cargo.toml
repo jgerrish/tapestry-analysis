@@ -1,6 +1,6 @@
 [package]
 name = "tapestry-analysis"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["Joshua Gerrish <jgerrish@gmail.com>"]
 description = "Collection of cryptanalysis tools for checksum and hash algorithms"

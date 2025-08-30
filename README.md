@@ -31,6 +31,13 @@ the rand crate, enable it with a feature:
 cargo run --example adler32_output_space_use --features external-rand
 
 
+## Visualizations
+
+To see an example feedback shift register diagram of a CRC:
+
+cargo run --example shift_register_diagram
+
+
 # Contributing
 
 Efficiency wasn't a driving factor with this project.  It was mainly
@@ -38,3 +45,14 @@ meant to explore checksums and hashes and understand them.
 
 If you would like to optimize the code or have bug fixes,
 contributions are welcome.
+
+
+# References
+
+Phil Koopman's YouTube example that covers polynomial division and
+shift register representations:
+
+[L600 CRC Computation Examples -- Polynomial Division & Hardware Shift Register](https://www.youtube.com/watch?v=1t3DacyL5HA)
+
+Implementing CRCs by Jack Crenshaw from Embedded Systems Programming, 1992
+[Implementing CRCs](https://www.scribd.com/document/617993743/JCrenshaw-ImplementingCRCs)
