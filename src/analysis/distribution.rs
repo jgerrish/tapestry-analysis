@@ -1,6 +1,6 @@
 //! Statistical distribution structures and some implementations for
 //! common distributions.
-use checksum_tapestry::crc::{BitWidth, CRCConfiguration, CRCEndianness, CRC};
+use checksum_tapestry::crc::{BitOrder, BitWidth, CRCConfiguration, CRC};
 use checksum_tapestry::Checksum;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -54,8 +54,13 @@ impl<'a> Distribution<u32> for DiscreteUniformDistribution<'a> {
 impl<'a> DiscreteUniformDistribution<'a> {
     /// Use the CRC code as a crude PRNG
     /// It's not secure, but it works for the purposes here as an example
-    /// If you want a more tested PRNG library, enable the experiments feature with:
-    /// cargo run --example adler32_output_space_use --features experiments
+    /// If you want a more tested PRNG library, enable the external-rand feature with:
+    /// cargo run --example adler32_output_space_use --features external-rand
+    ///
+    /// I'm in the progress of reviewing this PRNG.  One particular
+    /// weakness is that CRCs don't cycle through zero, so the
+    /// generated random distribution will be biased towards larger
+    /// values without proper weighting.
     pub fn new(a: u32, b: u32) -> Self {
         let t = SystemTime::now();
         let t = t.duration_since(UNIX_EPOCH).unwrap().as_millis();
@@ -64,7 +69,7 @@ impl<'a> DiscreteUniformDistribution<'a> {
             CRCConfiguration::<u32>::new(
                 "CRC-32/ISO-HDLC",
                 BitWidth::ThirtyTwo,
-                CRCEndianness::LSB,
+                BitOrder::LSBFirst,
                 0x04C11DB7,
                 true,
                 Some(seed),

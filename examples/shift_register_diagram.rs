@@ -3,7 +3,7 @@
 //!
 //! To run: cargo run --example shift_register_diagram
 //!
-use checksum_tapestry::crc::{BitWidth, CRCConfiguration, CRCEndianness};
+use checksum_tapestry::crc::{self, BitWidth, CRCConfiguration};
 use tapestry_analysis::visualization::shift_register_diagram::{
     CRCDiagram, Endianness, SimpleCRCDiagram,
 };
@@ -30,7 +30,7 @@ fn main() {
     let config = CRCConfiguration::<u16>::new(
         "CRC-4/CRENSHAW",
         BitWidth::Four,
-        CRCEndianness::MSB,
+        crc::BitOrder::MSBFirst,
         0b1001,
         false,
         None,

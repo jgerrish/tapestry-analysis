@@ -30,6 +30,20 @@ the rand crate, enable it with a feature:
 
 cargo run --example adler32_output_space_use --features external-rand
 
+# Security and Safety
+
+The pseudo-random algorithms in here are not cryptographically secure.
+They are not even unbiased on a simple level.
+
+The checksum implementations have not been audited by a third-party
+for use in safety critical applications.  While they provide some test
+coverage, the test sources have not been checked themselves.
+
+This crate can provide a good platform to learn about checksums and
+coding theory.  By experimenting with and visualizing the objects in
+different ways I have found it easier myself to better understand
+them.
+
 
 ## Visualizations
 

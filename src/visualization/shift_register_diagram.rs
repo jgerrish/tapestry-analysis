@@ -383,7 +383,7 @@ mod tests {
     use super::{CRCDiagram, Endianness, SimpleCRCDiagram};
     #[allow(unused_imports)]
     use checksum_tapestry::{
-        crc::{BitWidth, CRCConfiguration, CRCEndianness, CRC},
+        crc::{self, BitWidth, CRCConfiguration, CRC},
         Checksum,
     };
 
@@ -414,7 +414,7 @@ mod tests {
         let config = CRCConfiguration::<u16>::new(
             "CRC-4/CRENSHAW",
             BitWidth::Four,
-            CRCEndianness::MSB,
+            crc::BitOrder::MSBFirst,
             0b1001,
             false,
             None,
@@ -451,7 +451,7 @@ mod tests {
         let config = CRCConfiguration::<u16>::new(
             "CRC-4/CRENSHAW",
             BitWidth::Four,
-            CRCEndianness::MSB,
+            crc::BitOrder::MSBFirst,
             0b1001,
             false,
             None,
@@ -475,7 +475,7 @@ mod tests {
         let config = CRCConfiguration::<u16>::new(
             "CRC-4/CRENSHAW",
             BitWidth::Four,
-            CRCEndianness::MSB,
+            crc::BitOrder::MSBFirst,
             0b1001,
             false,
             None,
@@ -493,7 +493,7 @@ mod tests {
             CRCConfiguration::<u16>::new(
                 "CRC-4/CRENSHAW",
                 BitWidth::Four,
-                CRCEndianness::LSB,
+                crc::BitOrder::LSBFirst,
                 0b1001,
                 true,
                 None,
@@ -542,7 +542,7 @@ mod tests {
         let config = CRCConfiguration::<u16>::new(
             "CRC-8/LRCC",
             BitWidth::Eight,
-            CRCEndianness::MSB,
+            crc::BitOrder::MSBFirst,
             0b00000001,
             false,
             None,
@@ -563,7 +563,7 @@ mod tests {
         let config = CRCConfiguration::<u16>::new(
             "CRC-3/GSM",
             BitWidth::Three,
-            CRCEndianness::MSB,
+            crc::BitOrder::MSBFirst,
             0b011,
             false,
             None,
@@ -590,7 +590,7 @@ mod tests {
         let config = CRCConfiguration::<u16>::new(
             "CRC-12/UMTS",
             BitWidth::Twelve,
-            CRCEndianness::MSB,
+            crc::BitOrder::MSBFirst,
             0x80F,
             true,
             None,
@@ -615,7 +615,7 @@ mod tests {
     //     let config = CRCConfiguration::<u16>::new(
     //         "CRC-5/USB",
     //         BitWidth::Five,
-    //         CRCEndianness::MSB,
+    //         crc::BitOrder::MSBFirst,
     //         0x25,
     //         true,
     //         None,
