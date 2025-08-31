@@ -17,7 +17,7 @@ use tapestry_analysis::analysis::{
 };
 
 use checksum_tapestry::adler32::Adler32;
-use checksum_tapestry::crc::{BitWidth, CRCConfiguration, BitOrder, CRC};
+use checksum_tapestry::crc::{BitOrder, BitWidth, CRCConfiguration, CRC};
 
 const NUM_EXPERIMENTS: u32 = 1000;
 const MESSAGE_SIZE: u32 = 50;
