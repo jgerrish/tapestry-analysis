@@ -17,7 +17,7 @@ use tapestry_analysis::analysis::{
 };
 
 use checksum_tapestry::adler32::Adler32;
-use checksum_tapestry::crc::{BitWidth, CRCConfiguration, CRCEndianness, CRC};
+use checksum_tapestry::crc::{BitWidth, CRCConfiguration, BitOrder, CRC};
 
 const NUM_EXPERIMENTS: u32 = 1000;
 const MESSAGE_SIZE: u32 = 50;
@@ -78,7 +78,7 @@ fn main() {
         CRCConfiguration::<u32>::new(
             "CRC-32/ISO-HDLC",
             BitWidth::ThirtyTwo,
-            CRCEndianness::LSB,
+            BitOrder::LSBFirst,
             0x04C11DB7,
             true,
             Some(0xFFFFFFFF),

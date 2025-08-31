@@ -1,6 +1,6 @@
 //! Statistical distribution structures and some implementations for
 //! common distributions.
-use checksum_tapestry::crc::{BitWidth, CRCConfiguration, CRCEndianness, CRC};
+use checksum_tapestry::crc::{BitWidth, CRCConfiguration, BitOrder, CRC};
 use checksum_tapestry::Checksum;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -64,7 +64,7 @@ impl<'a> DiscreteUniformDistribution<'a> {
             CRCConfiguration::<u32>::new(
                 "CRC-32/ISO-HDLC",
                 BitWidth::ThirtyTwo,
-                CRCEndianness::LSB,
+                BitOrder::LSBFirst,
                 0x04C11DB7,
                 true,
                 Some(seed),

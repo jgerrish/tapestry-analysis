@@ -1,6 +1,6 @@
 [package]
 name = "tapestry-analysis"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["Joshua Gerrish <jgerrish@gmail.com>"]
 description = "Collection of cryptanalysis tools for checksum and hash algorithms"
@@ -14,5 +14,5 @@ license = "MIT"
 external-rand = ["dep:rand"]
 
 [dependencies]
-checksum-tapestry = "0.4"
+checksum-tapestry = "0.5"
 rand = { version = "0.8", optional = true }
